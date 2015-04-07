@@ -1,9 +1,9 @@
 # Limbo
 ### A [Slack](https://slack.com/) chatbot
 
-Build status from pre-fork: ![](https://travis-ci.org/llimllib/limbo.svg?branch=master)
+Build status from pre-fork: [![Build Status](https://travis-ci.org/llimllib/limbo.svg?branch=master)](https://travis-ci.org/llimllib/limbo)
 
-Build status for this fork: ![](https://travis-ci.org/g2graman/limbo.svg?branch=master)
+Build status for this fork: [![Build Status](https://travis-ci.org/g2graman/limbo.svg?branch=master)](https://travis-ci.org/g2graman/limbo)
 
 ## Installation
 
