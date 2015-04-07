@@ -1,0 +1,4 @@
+#!/bin/bash
+
+export SLACK_TOKEN="xoxb-4348895457-7mezlsNROnzaL3s13uKU3ray"
+make run
