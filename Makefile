@@ -2,6 +2,7 @@
 test:
 	nosetests -s --nologcapture
 
+
 .PHONY: clean
 clean:
 	rm -rf build dist limbo.egg-info
@@ -16,6 +17,8 @@ repl: install
 
 .PHONY: install
 install:
+	easy_install -U pip
+	pip install -r requirements.txt --upgrade
 	python setup.py install
 	make clean
 

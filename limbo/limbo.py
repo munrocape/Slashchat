@@ -11,6 +11,8 @@ import sys
 import time
 import traceback
 import imp
+import schedule
+import time
 
 from slackclient import SlackClient
 from server import LimboServer
@@ -93,7 +95,10 @@ def run_hook(hooks, hook, *args):
 
     return responses
 
-def handle_meta(event, server):
+def handle_meta(event, server, supplemental_data={}):
+        print("Entering handle_meta")
+        print("Event: " + str(event))
+        print("Supplemental data: " + str(supplemental_data))
         subtype = event.get("subtype", "")
         if subtype == "bot_message" or subtype == "message_changed":
             return
@@ -108,6 +113,7 @@ def handle_meta(event, server):
         if msguser["name"] == botname or msguser["name"].lower() == "slackbot":
             return
 
+        print("Leaving handle_meta")
         return "\n".join(run_hook(server.hooks, "meta", event, server))
 
 def handle_message(event, server):
@@ -128,14 +134,24 @@ def handle_message(event, server):
 
     return "\n".join(run_hook(server.hooks, "message", event, server))
 
+def handle_job(event, server, supplemental_data={}):
+    print("Entering handle_job")
+    print("Event: " + str(event))
+    print("Supplemental data: " + str(supplemental_data))
+    print("Leaving handle_job")
+    pass
+
 event_handlers = {
     "message": handle_message,
-    "meta": handle_meta
+    "meta": handle_meta,
+    "job": handle_job
 }
 
-def handle_event(event, server):
+def handle_event(event, server, supplemental_data={}):
     handler = event_handlers.get(event.get("type"))
-    if handler:
+    if (handler):
+        if (supplemental_data != {}):
+            return handler(event, server, supplemental_data)    
         return handler(event, server)
 
 def getif(config, name, envvar):
@@ -152,6 +168,11 @@ def init_config():
 
 def loop(server, supplemental_data={}):
     try:
+        # Group meta plugins
+        meta_plugindir = os.path.join(DIR("plugins"), "meta")
+        meta_plugins =  map(os.path.split, glob(os.path.join(meta_plugindir, "[!_]*.py")))
+        meta_plugins = map(lambda x: os.path.splitext(x[-1])[0], meta_plugins)
+
         while True:
             # This will cause a broken pipe to reveal itself
             server.slack.server.ping()
@@ -160,15 +181,45 @@ def loop(server, supplemental_data={}):
             for event in events:
                 logger.debug("got {0}".format(event.get("type", event)))
                 modified_event = event
-                meta_plugindir = os.path.join(DIR("plugins"), "meta")
-                meta_plugins =  map(os.path.split, glob(os.path.join(meta_plugindir, "[!_]*.py")))
-                meta_plugins = map(lambda x: os.path.splitext(x[-1])[0], meta_plugins)
+
+                # Start "job" command sieve
+                expr = ""
+                if (event.get("type", event) == "message"):
+                    expr = event.get("text", event)
+                    expr = expr.lstrip()
+
+                part_expr = filter(None, expr.split())
+                non_empty = len(part_expr) > 0 and expr[0] == "!"
+
+                # ---- one of "every", "hour", "day", "at" must appear in expression, after "!"
+                after_exc = set(filter(None, expr[1:].split()))
+                detect_set = set(["every", "hour", "day", "at"])
+                has_time_format = non_empty and ((after_exc & detect_set) != set())
+
+                tail_commands, match = None, None
+                if (has_time_format):
+                    match = part_expr
+                    tail_commands = part_expr[-1]
+                # End "job" command sieve
+
                 if(event.get("type", event) == "message" and event.get("text", event)[1:] in meta_plugins):
                     event["type"] = "meta"
                     modified_event = event
-                response = handle_event(modified_event, server)
+
+                    #Provide supplemental data for on_meta
+                    response = handle_event(modified_event, server, supplemental_data)
+                elif(event.get("type", event) == "message" and match and tail_commands):
+                    event["type"] = "job"
+                    modified_event = event
+
+                    #Provide supplemental data for on_job
+                    response = handle_event(modified_event, server, supplemental_data)
+                else:  
+                    #Do not provide supplemental data for other classes of hooks
+                    response = handle_event(modified_event, server, {})
                 if response:
                     server.slack.rtm_send_message(event["channel"], response)
+            #schedule.run_pending()
             time.sleep(1)
     except KeyboardInterrupt:
         if os.environ.get("LIMBO_DEBUG"):
@@ -248,4 +299,11 @@ def repl(server, args):
         pass
 
 def init_db(database_file):
-    return sqlite3.connect(database_file)
+    db = sqlite3.connect(database_file)
+    with db:
+        pass
+        #cursor = db.cursor()
+        #Create a table for Job Scheduling
+        #cursor.execute("CREATE TABLE IF NOT EXISTS Jobs(jID SERIAL PRIMARY KEY, Start timestamp, Next timestamp, Left Integer, Frequency VARCHAR(8))")
+        #print(cursor.fetchall())
+    return db
