@@ -3,7 +3,7 @@
 
 Build status from pre-fork: [![Build Status](https://travis-ci.org/llimllib/limbo.svg?branch=master)](https://travis-ci.org/llimllib/limbo)
 
-Build status for this fork: [![Build Status](https://travis-ci.org/g2graman/limbo.svg?branch=master)](https://travis-ci.org/g2graman/limbo)
+Build status for this fork: [![Build Status](https://travis-ci.org/g2graman/limbo.svg?branch=master)](https://travis-ci.org/g2graman/limbo) [![Circle CI](https://circleci.com/gh/g2graman/limbo/tree/master.svg?style=svg)](https://circleci.com/gh/g2graman/limbo/tree/master)
 
 ## Installation
 

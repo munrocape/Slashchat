@@ -1,0 +1,3 @@
+#!/bin/bash
+
+heroku config | tail -1 | cut -d : -f 2 | tr -d '[[:space:]]' | tee TOKEN

@@ -1,0 +1,21 @@
+dependencies:
+  pre:
+    - easy_install -U pip
+    - pip install coveralls --upgrade
+    - pip install -r requirements.txt --upgrade
+
+test:
+  override:
+    - make test
+
+machine:
+  timezone:
+    America/Toronto
+  python:
+    version: 2.7
+
+deployment:
+  staging:
+    branch: master
+    heroku:
+      appname: desolate-fortress-3689
