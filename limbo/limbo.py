@@ -196,13 +196,16 @@ def loop(server, supplemental_data={}):
                     expr = event.get("text")
                     print(expr)
 
-                part_expr = filter(None, expr.split())
-                non_empty = len(part_expr) > 0 and expr[0] == "!"
+                if(expr):
+                    part_expr = filter(None, expr.split())
+                    non_empty = len(part_expr) > 0 and expr[0] == "!"
 
-                # ---- one of "every", "hour", "day", "at" must appear in expression, after "!"
-                after_exc = set(filter(None, expr[1:].split()))
-                detect_set = set(["every", "hour", "day", "at"])
-                has_time_format = non_empty and ((after_exc & detect_set) != set())
+                    # ---- one of "every", "hour", "day", "at" must appear in expression, after "!"
+                    after_exc = set(filter(None, expr[1:].split()))
+                    detect_set = set(["every", "hour", "day", "at"])
+                    has_time_format = non_empty and ((after_exc & detect_set) != set())
+                else:
+                    has_time_format = False
 
                 tail_commands, match = None, None
                 if (has_time_format):
