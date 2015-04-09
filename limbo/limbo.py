@@ -187,7 +187,7 @@ def loop(server, supplemental_data={}):
 
             events = server.slack.rtm_read()
             for event in events:
-                logger.debug("got {0}".format(event.get("type", event)))
+                logger.debug("got {0}".format(event.get("type")))
                 modified_event = event
 
                 # Start "job" command sieve
@@ -213,13 +213,13 @@ def loop(server, supplemental_data={}):
                     tail_commands = part_expr[-1]
                 # End "job" command sieve
 
-                if(event.get("type", event) == "message" and event.get("text", event)[1:] in meta_plugins):
+                if(event.get("type") == "message" and event.get("text")[1:] in meta_plugins):
                     event["type"] = "meta"
                     modified_event = event
 
                     #Provide supplemental data for on_meta
                     response = handle_event(modified_event, server, supplemental_data)
-                elif(event.get("type", event) == "message" and match and tail_commands):
+                elif(event.get("type") == "message" and match and tail_commands):
                     event["type"] = "job"
                     modified_event = event
                     #Provide supplemental data for on_job
