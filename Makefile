@@ -1,5 +1,5 @@
 .PHONY: test
-test: install
+test:
 	nosetests -s --nologcapture
 
 
