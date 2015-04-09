@@ -1,10 +1,30 @@
 language: python
 python:
-- '2.6'
-- '2.7'
-#install:
-script: make test
+  - 2.6
+  - 2.7
+install: pip install coveralls --upgrade
+script: 
+  - make test
+  - coverage run test/test.py
+after_success: coveralls
 notifications:
   slack:
     secure: qTTpPJZRjkFNlWUQd4M4odA+/QnuEqoD3ole8tQA+oFo2hzA7toQbAorgKd20mJ0VMLbrTxUDeCHwuLH6EYs0k9gnaDx7J8gaohW3ePHU6vncGfSh/9r8jCLHOdD/23ySm6D4TKR5SV7izNS+4WyqLqeLugdk5rFCwW4JJS118U=
   email: false
+
+matrix:
+  allow_failures:
+    - python: 3.2
+    - python: 3.3
+    - python: 3.4
+    - python: nightly
+    - python: HEAD
+
+env:
+  global:
+    - CI_NODE_TOTAL=4
+  matrix:
+    - CI_NODE_INDEX=0
+    - CI_NODE_INDEX=1
+    - CI_NODE_INDEX=2
+    - CI_NODE_INDEX=3
