@@ -6,8 +6,10 @@ import re
 import requests
 import sched
 import time
-import threading
+import multiprocessing as mp
 
+
+QUEUE_SIZE = 10
 scheduler = sched.scheduler(time.time, time.sleep)
 
 def spy(url, copy="", c_level=9):
@@ -23,11 +25,12 @@ def check_match(url, initial, c_level=9):
 			compress(bs.encode(), c_level))
 	if(s.real_quick_ratio() > 0.90):
 		scheduler.enter(3600, 10, check_match, [url, initial, c_level])
-		t = threading.Thread(target=scheduler.run)
-		t.start()
+		p = mp.Process(target=scheduler.run)
+		p.start()
+
 	else:
 		return 'Threshold exceeded for ' + url + ' spy: ' + ' update detected'
-	return 'Threshold not exceeded for ' + url + ' spy: ' + ' update not detected yet'
+	return
 
 def on_message(msg, server):
     text = msg.get("text", "")
