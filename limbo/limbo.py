@@ -11,16 +11,17 @@ import sys
 import time
 import traceback
 import imp
-import schedule
+import sched
 import time
+
 
 from slackclient import SlackClient
 from server import LimboServer
 from fakeserver import FakeServer
 
+
 CURDIR = os.path.abspath(os.path.dirname(__file__))
 DIR = functools.partial(os.path.join, CURDIR)
-
 logger = logging.getLogger(__name__)
 
 
@@ -139,6 +140,9 @@ def handle_job(event, server, supplemental_data={}):
     print("Event: " + str(event))
     print("Supplemental data: " + str(supplemental_data))
     print("Leaving handle_job")
+    return "\n".join(run_hook(server.hooks, "job", event, server))
+
+def handle_spy(event, server, supplemental_data={}):
     pass
 
 event_handlers = {
@@ -173,6 +177,9 @@ def loop(server, supplemental_data={}):
         meta_plugins =  map(os.path.split, glob(os.path.join(meta_plugindir, "[!_]*.py")))
         meta_plugins = map(lambda x: os.path.splitext(x[-1])[0], meta_plugins)
 
+        # For 
+        spies = []
+
         while True:
             # This will cause a broken pipe to reveal itself
             server.slack.server.ping()
@@ -184,9 +191,9 @@ def loop(server, supplemental_data={}):
 
                 # Start "job" command sieve
                 expr = ""
-                if (event.get("type", event) == "message"):
-                    expr = event.get("text", event)
-                    expr = expr.lstrip()
+                if (event.get("type") == "message"):
+                    expr = event.get("text")
+                    print(expr)
 
                 part_expr = filter(None, expr.split())
                 non_empty = len(part_expr) > 0 and expr[0] == "!"
@@ -211,7 +218,6 @@ def loop(server, supplemental_data={}):
                 elif(event.get("type", event) == "message" and match and tail_commands):
                     event["type"] = "job"
                     modified_event = event
-
                     #Provide supplemental data for on_job
                     response = handle_event(modified_event, server, supplemental_data)
                 else:  
@@ -219,7 +225,6 @@ def loop(server, supplemental_data={}):
                     response = handle_event(modified_event, server, {})
                 if response:
                     server.slack.rtm_send_message(event["channel"], response)
-            #schedule.run_pending()
             time.sleep(1)
     except KeyboardInterrupt:
         if os.environ.get("LIMBO_DEBUG"):
