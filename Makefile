@@ -1,6 +1,6 @@
 .PHONY: test
 test:
-	nosetests -s --cover-package=. --nologcapture --cover-erase --cover-tests --cover-branches
+	nosetests --with-coverage -s --cover-package=. --nologcapture --cover-erase --cover-tests --cover-branches
 
 
 .PHONY: clean
