@@ -9,8 +9,7 @@ from bs4 import BeautifulSoup
 
 def stock(searchterm):
     searchterm = quote(searchterm)
-    url = "http://www.shutterstock.com/cat.mhtml?searchterm={0}&search_group=&"
-    url += "lang=en&language=en&search_source=search_form&version=llv1".format(searchterm)
+    url = "http://www.shutterstock.com/cat.mhtml?searchterm={0}&search_group=&lang=en&language=en&search_source=search_form&version=llv1".format(searchterm)
     r = requests.get(url)
     soup = BeautifulSoup(r.text)
     images = [x["src"] for x in soup.select(".gc_clip img")]
