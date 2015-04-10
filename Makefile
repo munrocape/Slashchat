@@ -5,7 +5,7 @@ test:
 
 .PHONY: clean
 clean:
-	rm -rf build dist limbo.egg-info
+	rm -rf build dist limbo.egg-info .env .coverage limbo.sqlite3
 
 .PHONY: run
 run: install

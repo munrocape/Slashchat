@@ -2,9 +2,6 @@
 # -*- coding: utf-8 -*-
 # Thanks to Kenneth Reitz, I stole the template for this
 
-import os
-import sys
-
 try:
     from setuptools import setup
 except ImportError:
@@ -13,7 +10,7 @@ except ImportError:
 required = ['requests>=2.5', 'websocket-client==0.25.0', 'importlib>=1.0.3', 'beautifulsoup4==4.3.2']
 packages = ['limbo', 'limbo.slackclient', 'limbo.plugins', 'limbo.plugins.meta']
 
-#To add a message type, add appropriate entry to packages and for package_data
+# To add a message type, add appropriate entry to packages and for package_data
 try:
     longdesc = open("README.rs").read()
 except:
