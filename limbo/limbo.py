@@ -8,12 +8,11 @@ import os
 import re
 import sqlite3
 import sys
-import time
 import traceback
 import imp
-import sched
+# import sched
 import time
-import multiprocessing as mp
+# import multiprocessing as mp
 
 
 from slackclient import SlackClient
@@ -52,13 +51,15 @@ def init_plugins(plugindir, supplemental_data={}):
     oldpath = copy.deepcopy(sys.path)
     sys.path.insert(0, plugindir)
 
-    #Add immediate plugins to list of allowed plugins, for meta-handlers
-    supplemental_data["allowed"] = glob(os.path.join(plugindir, "[!_]*.py"))
-
+    plugins = glob(os.path.join(plugindir, "[!_]*.py"))
     meta_plugins = glob(os.path.join(os.path.join(plugindir, "meta"), "[!_]*.py"))
 
-    #meta_plugins are added to below so they can appear in output of !help, etc
-    for plugin in (meta_plugins + glob(os.path.join(plugindir, "[!_]*.py"))):
+    # Add immediate plugins to list of allowed plugins, for meta-handlers
+    supplemental_data["allowed"] = plugins
+    # supplemental_data["allowed"] += meta_plugins
+
+    # meta_plugins are added to below so they can appear in output of !help, etc
+    for plugin in (meta_plugins + plugins):
         logger.debug("plugin: {0}".format(plugin))
         try:
             mod = imp.load_source(os.path.basename(plugin)[:-3], plugin)
@@ -137,14 +138,44 @@ def handle_message(event, server):
     return "\n".join(run_hook(server.hooks, "message", event, server))
 
 def handle_job(event, server, supplemental_data={}):
+    # ignore bot messages and edits
+    subtype = event.get("subtype", "")
+    if subtype == "bot_message" or subtype == "message_changed":
+        return
+
+    botname = server.slack.server.login_data["self"]["name"]
+    try:
+        msguser = server.slack.server.users.get(event["user"])
+    except KeyError:
+        logger.debug("event {0} has no user".format(event))
+        return
+
+    if msguser["name"] == botname or msguser["name"].lower() == "slackbot":
+        return
+
     print("Entering handle_job")
     print("Event: " + str(event))
     print("Supplemental data: " + str(supplemental_data))
     print("Leaving handle_job")
-    return "\n".join(run_hook(server.hooks, "job", event, server))
+    return
+    # return "\n".join(run_hook(server.hooks, "job", event, server))
 
 def handle_spy(event, server, supplemental_data={}):
-    pass
+    # ignore bot messages and edits
+    subtype = event.get("subtype", "")
+    if subtype == "bot_message" or subtype == "message_changed":
+        return ""
+
+    botname = server.slack.server.login_data["self"]["name"]
+    try:
+        msguser = server.slack.server.users.get(event["user"])
+    except KeyError:
+        logger.debug("event {0} has no user".format(event))
+        return 
+
+    if msguser["name"] == botname or msguser["name"].lower() == "slackbot":
+        return
+    return  # Replace this
 
 event_handlers = {
     "message": handle_message,
@@ -156,7 +187,7 @@ def handle_event(event, server, supplemental_data={}):
     handler = event_handlers.get(event.get("type"))
     if (handler):
         if (supplemental_data != {}):
-            return handler(event, server, supplemental_data)    
+            return handler(event, server, supplemental_data)
         return handler(event, server)
 
 def getif(config, name, envvar):
@@ -173,13 +204,18 @@ def init_config():
 
 def loop(server, supplemental_data={}):
     try:
+
+        plugindir = DIR("plugins")
+        plugins = glob(os.path.join(plugindir, "[!_]*.py"))
+        plugins = map(lambda x: os.path.splitext(os.path.basename(x))[0], plugins)
+
         # Group meta plugins
         meta_plugindir = os.path.join(DIR("plugins"), "meta")
-        meta_plugins =  map(os.path.split, glob(os.path.join(meta_plugindir, "[!_]*.py")))
-        meta_plugins = map(lambda x: os.path.splitext(x[-1])[0], meta_plugins)
+        meta_plugins = map(os.path.split, glob(os.path.join(meta_plugindir, "[!_]*.py")))
+        meta_plugins = map(lambda x: os.path.splitext(os.path.basename(x))[0], meta_plugins)
 
-        # For 
-        spies = []
+        # For spy plugin
+        # spies = []
 
         while True:
             # This will cause a broken pipe to reveal itself
@@ -191,48 +227,57 @@ def loop(server, supplemental_data={}):
                 modified_event = event
 
                 # Start "job" command sieve
-                expr = ""
-                if (event.get("type") == "message"):
-                    expr = event.get("text")
-                    print(expr)
+                expr, matched_keywords = "", []
+                if (event.get("type", event) == "message"):
+                    expr = str(event.get("text", event))
 
-                if(expr):
+                if(expr != "" and expr.strip().startswith("!job")):
                     part_expr = filter(None, expr.split())
                     non_empty = len(part_expr) > 0 and expr[0] == "!"
 
                     # ---- one of "every", "hour", "day", "at" must appear in expression, after "!"
                     after_exc = set(filter(None, expr[1:].split()))
                     detect_set = set(["every", "hour", "day", "at"])
-                    has_time_format = non_empty and ((after_exc & detect_set) != set())
+                    matched_keywords = (after_exc & detect_set)
+                    has_time_format = non_empty and (matched_keywords != set())
                 else:
                     has_time_format = False
 
-                tail_commands, match = None, None
+                tail_commands, match = False, False
                 if (has_time_format):
                     match = part_expr
-                    tail_commands = part_expr[-1]
+                    t_expr = ' '.join(part_expr)
+                    keyword_inds = [t_expr.find(x) for x in list(matched_keywords)]
+                    tail_ind = max(keyword_inds)
+                    t_exprs = t_expr[tail_ind:].split()[1:]
+                    if(len(t_exprs) > 1):
+                        tail_commands = set(t_exprs[1:]) & (set(meta_plugins + plugins)) != set()
                 # End "job" command sieve
 
-                if(event.get("type") == "message" and event.get("text")[1:] in meta_plugins):
+                if(event.get("type", event) == "message" and event.get("text") \
+                        and event.get("text")[1:] in meta_plugins):
                     event["type"] = "meta"
                     modified_event = event
 
-                    #Provide supplemental data for on_meta
+                    # Provide supplemental data for on_meta
                     response = handle_event(modified_event, server, supplemental_data)
-                elif(event.get("type") == "message" and match and tail_commands):
+                elif(event.get("type", event) == "message" and match and tail_commands):
                     event["type"] = "job"
                     modified_event = event
-                    #Provide supplemental data for on_job
+                    # Provide supplemental data for on_job
                     response = handle_event(modified_event, server, supplemental_data)
-                else:  
-                    #Do not provide supplemental data for other classes of hooks
+                else:
+                    # Do not provide supplemental data for other classes of hooks
                     response = handle_event(modified_event, server, {})
+
                 if response:
-                    server.slack.rtm_send_message(event["channel"], response)
+                    server.slack.rtm_send_message(modified_event.get("channel"), response)
+
             time.sleep(1)
     except KeyboardInterrupt:
         if os.environ.get("LIMBO_DEBUG"):
-            import ipdb; ipdb.set_trace()
+            import ipdb
+            ipdb.set_trace()
         raise
 
 def relevant_environ():
@@ -254,12 +299,9 @@ def init_server(arguments, Server=LimboServer, Client=SlackClient):
         logger.error("""Unable to find a slack token. The environment variables
 limbo sees are:
 {0}
-
 and the current config is:
 {1}
-
 Try setting your bot's slack token with:
-
 export SLACK_TOKEN=<your-slack-bot-token>
 """.format(relevant_environ(), config))
         raise
@@ -277,7 +319,7 @@ def main(args):
         print(run_cmd(args.command, FakeServer(), args.hook, args.pluginpath).encode("utf8"))
         return
 
-    supplemental_data = {} #dictionary of (str, list of strs) pairs to supplement future handlers 
+    supplemental_data = {}  # dictionary of (str, list of strs) pairs to supplement future handlers
     server = init_server([args, supplemental_data])
 
     if server.slack.rtm_connect():
@@ -311,8 +353,9 @@ def init_db(database_file):
     db = sqlite3.connect(database_file)
     with db:
         pass
-        #cursor = db.cursor()
-        #Create a table for Job Scheduling
-        #cursor.execute("CREATE TABLE IF NOT EXISTS Jobs(jID SERIAL PRIMARY KEY, Start timestamp, Next timestamp, Left Integer, Frequency VARCHAR(8))")
-        #print(cursor.fetchall())
+        # cursor = db.cursor()
+        # Create a table for Job Scheduling
+        # cursor.execute("CREATE TABLE IF NOT EXISTS Jobs(jID SERIAL PRIMARY KEY,
+        # Start timestamp, Next timestamp, Left Integer, Frequency VARCHAR(8))")
+        # print(cursor.fetchall())
     return db
