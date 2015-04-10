@@ -4,30 +4,29 @@ test:
 
 .PHONY: clean
 clean:
-	rm -rf `cat .gitignore`
+	rm -rf `cat .gitignore | grep -v TOKEN`
+
 
 .PHONY: run
 run: install TOKEN
 	export SLACK_TOKEN=`cat TOKEN`
 	bin/limbo
-	make clean
 
 .PHONY: run_circle
 run_circle: install
 	bin/limbo
-	make clean
 
 .PHONY: repl
 repl: install TOKEN
 	export SLACK_TOKEN=`cat TOKEN`
 	bin/limbo -t
-	make clean
 
 .PHONY: install
 install:
 	easy_install -U pip
 	pip install -r requirements.txt --upgrade
 	python setup.py install
+	make clean
 
 .PHONY: publish
 publish:
