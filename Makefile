@@ -12,6 +12,11 @@ run: install TOKEN
 	bin/limbo
 	make clean
 
+.PHONY: run_circle
+run_circle: install
+	bin/limbo
+	make clean
+
 .PHONY: repl
 repl: install TOKEN
 	export SLACK_TOKEN=`cat TOKEN`
