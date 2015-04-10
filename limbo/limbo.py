@@ -254,7 +254,8 @@ def loop(server, supplemental_data={}):
                         tail_commands = set(t_exprs[1:]) & (set(meta_plugins + plugins)) != set()
                 # End "job" command sieve
 
-                if(event.get("type", event) == "message" and event.get("text", event)[1:] in meta_plugins):
+                if(event.get("type", event) == "message" and event.get("text") \
+                        and event.get("text")[1:] in meta_plugins):
                     event["type"] = "meta"
                     modified_event = event
 
@@ -270,7 +271,7 @@ def loop(server, supplemental_data={}):
                     response = handle_event(modified_event, server, {})
 
                 if response:
-                    server.slack.rtm_send_message(modified_event.get("channel", modified_event), response)
+                    server.slack.rtm_send_message(modified_event.get("channel"), response)
 
             time.sleep(1)
     except KeyboardInterrupt:
