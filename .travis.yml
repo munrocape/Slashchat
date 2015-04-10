@@ -9,7 +9,6 @@ install:
 cache: pip
 script: 
   - make test
-  - coverage run test/test.py
 after_success: coveralls
 notifications:
   slack:
