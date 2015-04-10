@@ -157,7 +157,7 @@ def handle_job(event, server, supplemental_data={}):
     print("Event: " + str(event))
     print("Supplemental data: " + str(supplemental_data))
     print("Leaving handle_job")
-    return ""
+    return
     # return "\n".join(run_hook(server.hooks, "job", event, server))
 
 def handle_spy(event, server, supplemental_data={}):
@@ -171,11 +171,11 @@ def handle_spy(event, server, supplemental_data={}):
         msguser = server.slack.server.users.get(event["user"])
     except KeyError:
         logger.debug("event {0} has no user".format(event))
-        return ""
+        return 
 
     if msguser["name"] == botname or msguser["name"].lower() == "slackbot":
-        return ""
-    return ""  # Replace this
+        return
+    return  # Replace this
 
 event_handlers = {
     "message": handle_message,
@@ -250,7 +250,7 @@ def loop(server, supplemental_data={}):
                     keyword_inds = [t_expr.find(x) for x in list(matched_keywords)]
                     tail_ind = max(keyword_inds)
                     t_exprs = t_expr[tail_ind:].split()[1:]
-                    if(len(t_exprs) > 1):  
+                    if(len(t_exprs) > 1):
                         tail_commands = set(t_exprs[1:]) & (set(meta_plugins + plugins)) != set()
                 # End "job" command sieve
 
@@ -299,12 +299,9 @@ def init_server(arguments, Server=LimboServer, Client=SlackClient):
         logger.error("""Unable to find a slack token. The environment variables
 limbo sees are:
 {0}
-
 and the current config is:
 {1}
-
 Try setting your bot's slack token with:
-
 export SLACK_TOKEN=<your-slack-bot-token>
 """.format(relevant_environ(), config))
         raise
