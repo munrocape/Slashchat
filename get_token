@@ -1,10 +1,15 @@
 #!/bin/bash
 
-config_vars=$(heroku config | tail -1)
+if [[ $SLACK_TOKEN == '' ]]; then
+	if [[ $(ls | grep -x TOKEN | wc -w) -lt 1 ]]; then
+		config_vars=$(heroku config | tail -1)
 
-while read line
-do
-	if [[ $(echo $line | cut -d : -f 1 | tr -d '[[:space:]]') == 'SLACK_TOKEN' ]]; then
-		echo $(echo $line | cut -d : -f 2 | tr -d '[[:space:]]') | tee TOKEN
+		while read line
+		do
+			if [[ $(echo $line | cut -d : -f 1 | tr -d '[[:space:]]') == 'SLACK_TOKEN' ]]; then
+				echo $(echo $line | cut -d : -f 2 | tr -d '[[:space:]]') | tee TOKEN
+			fi
+		done <<< $config_vars
 	fi
-done <<< $config_vars
+	export SLACK_TOKEN=`cat ./TOKEN`
+fi

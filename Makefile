@@ -9,7 +9,7 @@ clean:
 
 .PHONY: run
 run: install TOKEN
-	export SLACK_TOKEN=`cat TOKEN`
+	./get_token
 	bin/limbo
 
 .PHONY: run_circle
@@ -18,7 +18,7 @@ run_circle: install
 
 .PHONY: repl
 repl: install TOKEN
-	export SLACK_TOKEN=`cat TOKEN`
+	./get_token
 	bin/limbo -t
 
 .PHONY: install
