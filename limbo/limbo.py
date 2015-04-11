@@ -13,7 +13,7 @@ import imp
 # import sched
 import time
 # import multiprocessing as mp
-
+import HTMLParser
 
 from slackclient import SlackClient
 from server import LimboServer
@@ -23,6 +23,8 @@ from fakeserver import FakeServer
 CURDIR = os.path.abspath(os.path.dirname(__file__))
 DIR = functools.partial(os.path.join, CURDIR)
 logger = logging.getLogger(__name__)
+
+h = HTMLParser.HTMLParser()
 
 
 class InvalidPluginDir(Exception):
@@ -229,7 +231,8 @@ def loop(server, supplemental_data={}):
                 # Start "job" command sieve
                 expr, matched_keywords = "", []
                 if (event.get("type", event) == "message"):
-                    expr = str(event.get("text", event))
+					
+                    expr = event.get("text", event)
 
                 if(expr != "" and expr.strip().startswith("!job")):
                     part_expr = filter(None, expr.split())
