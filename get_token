@@ -1,15 +1,23 @@
 #!/bin/bash
 
-if [[ $SLACK_TOKEN == '' ]]; then
-	if [[ $(ls | grep -x TOKEN | wc -w) -lt 1 ]]; then
+if [ -z "${SLACK_TOKEN-}" ]; then
+	echo "SLACK_TOKEN was not set"
+	if [ $(ls | grep -x TOKEN | wc -w) -lt 1 ]; then
+		echo "TOKEN file not found"
 		config_vars=$(heroku config | tail -1)
 
 		while read line
 		do
-			if [[ $(echo $line | cut -d : -f 1 | tr -d '[[:space:]]') == 'SLACK_TOKEN' ]]; then
+			if [ $(echo $line | cut -d : -f 1 | tr -d '[[:space:]]') == 'SLACK_TOKEN' ]; then
 				echo $(echo $line | cut -d : -f 2 | tr -d '[[:space:]]') | tee TOKEN
+				break
 			fi
 		done <<< $config_vars
+	else
+		echo "TOKEN file found"
 	fi
 	export SLACK_TOKEN=`cat ./TOKEN`
+	echo "SLACK_TOKEN fixed"
+else
+	echo "SLACK_TOKEN was already set"
 fi
