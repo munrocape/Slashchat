@@ -1,9 +1,9 @@
-# Limbo
+# Slash
 ### A [Slack](https://slack.com/) chatbot
 
 Build status from pre-fork: [![Build Status](https://travis-ci.org/llimllib/limbo.svg?branch=master)](https://travis-ci.org/llimllib/limbo)
 
-Build status for this fork: [![Build Status](https://travis-ci.org/g2graman/limbo.svg?branch=master)](https://travis-ci.org/g2graman/limbo) [![Circle CI](https://circleci.com/gh/g2graman/limbo/tree/master.svg?style=svg)](https://circleci.com/gh/g2graman/limbo/tree/master)
+Build status for this fork: [![Build Status](https://travis-ci.org/g2graman/limbo.svg?branch=master)](https://travis-ci.org/g2graman/limbo) [![Circle CI](https://circleci.com/gh/g2graman/Slash/tree/master.svg?style=svg)](https://circleci.com/gh/g2graman/Slash/tree/master)
 
 ## Installation
 
@@ -23,19 +23,7 @@ You can use the `!help` command to print out all available commands and a brief 
 
 These are the current default plugins:
 
-* [calc](https://github.com/llimllib/limbo/wiki/Calc-Plugin)
-* [emoji](https://github.com/llimllib/limbo/wiki/Emoji-Plugin)
-* [flip](https://github.com/llimllib/limbo/wiki/Flip-Plugin)
-* [gif](https://github.com/llimllib/limbo/wiki/Gif-Plugin)
-* [google](https://github.com/llimllib/limbo/wiki/Google-Plugin)
-* [help](https://github.com/llimllib/limbo/wiki/Help-Plugin)
-* [image](https://github.com/llimllib/limbo/wiki/Image-Plugin)
-* [map](https://github.com/llimllib/limbo/wiki/Map-Plugin)
-* [stock](https://github.com/llimllib/limbo/wiki/Stock-Plugin)
-* [stockphoto](https://github.com/llimllib/limbo/wiki/Stock-Photo-Plugin)
-* [weather](https://github.com/llimllib/limbo/wiki/Weather-Plugin)
-* [wiki](https://github.com/llimllib/limbo/wiki/Wiki-Plugin)
-* [youtube](https://github.com/llimllib/limbo/wiki/Youtube-Plugin)
+TODO: list and links of links to wikis of current plugins
 
 ---
 
@@ -50,3 +38,6 @@ These are the current default plugins:
 * [@stopspazzing](https://github.com/stopspazzing)
 * [@noise](https://github.com/noise)
 * [@g2graman](https://github.com/g2graman) 
+
+## Reason for fork
+TODO: eloquently enunciate this repo's purpose
