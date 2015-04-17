@@ -10,7 +10,7 @@ Build status for this fork: [![Build Status](https://travis-ci.org/g2graman/Slas
 1. Clone the repo
 2. [Create a bot user](https://my.slack.com/services/new/bot) if you don't have one yet, and copy the API Token
 3. Use `echo "API_TOKEN_TO_ACCESS_SLACK" | tee TOKEN`, replacing `API_TOKEN_TO_ACCESS_SLACK` with your token (don't worry, I've added `TOKEN` to `.gitignore` so you won't accidentally commit your token to github)
-4. `./run`
+4. `make run`
 5. Invite Limbo into any channels you want it in, or just message it in #general. Try typing `!gif dubstep cat` to test it out
 
 ![kitten mittens](http://i.imgur.com/xhmD6QO.png)
