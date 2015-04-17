@@ -24,7 +24,7 @@ def test_cmd():
 
 def test_repl():
     msg = u"!echo Iñtërnâtiônàlizætiøn"
-    proc = subprocess.Popen(["Slashchat", "-t", "--pluginpath", TESTPLUGINS], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+    proc = subprocess.Popen([u"Slashchat", "-t", "--pluginpath", TESTPLUGINS], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
     out = proc.communicate(msg.encode("utf8"))[0]
     out = out.strip().decode("utf8")
     eq_(out, u"Slashchat> {0}\nSlashchat>".format(msg))
