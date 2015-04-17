@@ -5,8 +5,7 @@ import shlex
 
 from nose.tools import eq_
 
-DIR = os.path.dirname(os.path.realpath(__file__))
-TESTPLUGINS = os.path.join(DIR, "plugins")
+TESTPLUGINS = "test/plugins"
 
 # http://stackoverflow.com/a/13160748/42559
 def sh(cmd):
