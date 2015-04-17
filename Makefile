@@ -1,25 +1,27 @@
+.PHONY: all
+all: clean run
+
 .PHONY: test
 test:
 	nosetests --with-coverage -s --cover-package=. --nologcapture --cover-erase --cover-tests --cover-branches
 
 .PHONY: clean
 clean:
-	rm -rf `cat .gitignore | grep -v TOKEN`
-
+	scripts/clean.sh TOKEN
 
 .PHONY: run
-run: install TOKEN
-	./get_token
-	bin/limbo
+run: install
+	scripts/get_token.sh
+	bin/Slashchat
 
 .PHONY: run_circle
 run_circle: install
-	bin/limbo
+	bin/Slashchat
 
 .PHONY: repl
-repl: install TOKEN
-	./get_token
-	bin/limbo -t
+repl: install
+	scripts/get_token.sh
+	bin/Slashchat -t
 
 .PHONY: install
 install:
@@ -36,7 +38,7 @@ publish:
 
 .PHONY: flake8
 flake8:
-	flake8 limbo test
+	flake8 Slashchat test
 
 TOKEN:  
-	./get_token
+	scripts/get_token.sh

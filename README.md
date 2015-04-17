@@ -1,9 +1,9 @@
-# Slash
+# Slashchat
 ### A [Slack](https://slack.com/) chatbot
 
 Build status from pre-fork: [![Build Status](https://travis-ci.org/llimllib/limbo.svg?branch=master)](https://travis-ci.org/llimllib/limbo)
 
-Build status for this fork: [![Build Status](https://travis-ci.org/g2graman/limbo.svg?branch=master)](https://travis-ci.org/g2graman/limbo) [![Circle CI](https://circleci.com/gh/g2graman/Slash/tree/master.svg?style=svg)](https://circleci.com/gh/g2graman/Slash/tree/master)
+Build status for this fork: [![Build Status](https://travis-ci.org/g2graman/limbo.svg?branch=master)](https://travis-ci.org/g2graman/limbo) [![Circle CI](https://circleci.com/gh/g2graman/Slashchat/tree/master.svg?style=svg)](https://circleci.com/gh/g2graman/Slashchat/tree/master)
 
 ## Installation
 

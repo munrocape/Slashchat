@@ -16,7 +16,7 @@ import time
 import HTMLParser
 
 from slackclient import SlackClient
-from server import LimboServer
+from server import SlashchatServer
 from fakeserver import FakeServer
 
 
@@ -198,10 +198,19 @@ def getif(config, name, envvar):
 
 def init_config():
     config = {}
-    getif(config, "token", "SLACK_TOKEN")
-    getif(config, "loglevel", "LIMBO_LOGLEVEL")
-    getif(config, "logfile", "LIMBO_LOGFILE")
-    getif(config, "logformat", "LIMBO_LOGFORMAT")
+    getif(config, "token", "SLACK_TOKEN")  # Try setting config's token
+    if(not "token" in config.keys()):
+        if("TOKEN" in list(os.listdir('.'))):
+			token = ''
+			with open('TOKEN', 'r') as f:
+				data = f.readlines()
+				if (len(data) > 0):
+					token = data[0].strip()
+			if(token != ''):
+				config["token"] = token
+    getif(config, "loglevel", "SLASHCHAT_LOGLEVEL")
+    getif(config, "logfile", "SLASHCHAT_LOGFILE")
+    getif(config, "logformat", "SLASHCHAT_LOGFORMAT")
     return config
 
 def loop(server, supplemental_data={}):
@@ -278,7 +287,7 @@ def loop(server, supplemental_data={}):
 
             time.sleep(1)
     except KeyboardInterrupt:
-        if os.environ.get("LIMBO_DEBUG"):
+        if os.environ.get("SLASHCHAT_DEBUG"):
             import ipdb
             ipdb.set_trace()
         raise
@@ -286,9 +295,9 @@ def loop(server, supplemental_data={}):
 def relevant_environ():
     return dict((key, val)
                 for key, val in os.environ.iteritems()
-                if key.startswith("SLACK") or key.startswith("LIMBO"))
+                if key.startswith("SLACK") or key.startswith("SLASHCHAT"))
 
-def init_server(arguments, Server=LimboServer, Client=SlackClient):
+def init_server(arguments, Server=SlashchatServer, Client=SlackClient):
     args = arguments[0]
     supplemental_data = arguments[1]
     config = init_config()
@@ -300,7 +309,7 @@ def init_server(arguments, Server=LimboServer, Client=SlackClient):
         slack = Client(config["token"])
     except KeyError:
         logger.error("""Unable to find a slack token. The environment variables
-limbo sees are:
+Slashchat sees are:
 {0}
 and the current config is:
 {1}
@@ -343,7 +352,7 @@ def run_cmd(cmd, server, hook, pluginpath):
 def repl(server, args):
     try:
         while 1:
-            cmd = raw_input("limbo> ").decode("utf8")
+            cmd = raw_input("Slashchat> ").decode("utf8")
             if cmd.lower() == "quit" or cmd.lower() == "exit":
                 return
 
