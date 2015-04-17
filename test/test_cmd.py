@@ -5,7 +5,8 @@ import shlex
 
 from nose.tools import eq_
 
-TESTPLUGINS = "test/plugins"
+DIR = os.path.dirname(os.path.realpath(__file__))
+TESTPLUGINS = os.path.join(DIR, "plugins")
 
 # http://stackoverflow.com/a/13160748/42559
 def sh(cmd):
@@ -23,7 +24,7 @@ def test_cmd():
 
 def test_repl():
     msg = u"!echo Iñtërnâtiônàlizætiøn"
-    proc = subprocess.Popen([u"Slashchat", "-t", "--pluginpath", TESTPLUGINS], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+    proc = subprocess.Popen(["Slashchat", "-t", "--pluginpath", TESTPLUGINS], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
     out = proc.communicate(msg.encode("utf8"))[0]
     out = out.strip().decode("utf8")
     eq_(out, u"Slashchat> {0}\nSlashchat>".format(msg))
@@ -34,4 +35,4 @@ def test_repl():
 # def test_hook():
 #     out, ret = sh(u"Slashchat -c '' --pluginpath {0} --hook loop".format(TESTPLUGINS))
 #     out = out.strip()
-#     eq(out, ["init"])
+#     eq_(out, ["init"])
