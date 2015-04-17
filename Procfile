@@ -1,1 +1,1 @@
-worker: python bin/limbo
+worker: python bin/Slashchat

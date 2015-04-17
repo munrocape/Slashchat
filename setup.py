@@ -11,7 +11,7 @@ except ImportError:
     from distutils.core import setup
 
 required = ['requests>=2.5', 'websocket-client==0.25.0', 'importlib>=1.0.3', 'beautifulsoup4==4.3.2']
-packages = ['limbo', 'limbo.slackclient', 'limbo.plugins', 'limbo.plugins.meta']
+packages = ['Slashchat', 'Slashchat.slackclient', 'Slashchat.plugins', 'Slashchat.plugins.meta']
 
 #To add a message type, add appropriate entry to packages and for package_data
 try:
@@ -20,16 +20,16 @@ except:
     longdesc = ''
 
 setup(
-    name='limbo',
-    version='3.0.2',
+    name='Slashchat',
+    version='1.0.0',
     description='Simple and Clean Slack Chatbot',
     long_description=longdesc,
-    author='Bill Mill',
-    author_email='bill@billmill.org',
-    url='https://github.com/llimllib/limbo',
+    author='Francesco Gramano',
+    author_email='fran.gramano@mail.utoronto.ca',
+    url='https://github.com/g2graman/Slashchat',
     packages=packages,
-    scripts = ['bin/limbo'],
-    package_data={'': ['LICENSE',], '': ['limbo/plugins/*.py', 'limbo/plugins/meta/*.py']},
+    scripts = ['bin/Slashchat'],
+    package_data={'': ['limbo.LICENSE',], '': ['Slashchat/plugins/*.py', 'Slashchat/plugins/meta/*.py']},
     include_package_data=True,
     install_requires=required,
     license='MIT',

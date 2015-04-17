@@ -6,7 +6,7 @@ from nose.tools import eq_
 import vcr
 
 DIR = os.path.dirname(os.path.realpath(__file__))
-sys.path.insert(0, os.path.join(DIR, '../../limbo/plugins'))
+sys.path.insert(0, os.path.join(DIR, '../../Slashchat/plugins'))
 
 from mlb import on_message
 

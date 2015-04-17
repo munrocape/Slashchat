@@ -1,9 +1,9 @@
 """Log all messages to the database
 
-Only active if the LIMBO_LOG_EVERYTHING environment variable is set"""
+Only active if the SLASHCHAT_LOG_EVERYTHING environment variable is set"""
 import os
 
-DO_LOG = os.environ.get("LIMBO_LOG_EVERYTHING", False)
+DO_LOG = os.environ.get("SLASHCHAT_LOG_EVERYTHING", False)
 
 def on_message(msg, server):
     if DO_LOG:
