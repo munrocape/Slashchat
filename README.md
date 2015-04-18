@@ -42,8 +42,23 @@ TODO: list and links of links to wikis of current plugins
 ---
 ##Miscellaneous
 ### Reason for fork
-You might have noticed that this repository is actually a fork of [llimllib's limbo](https://github.com/llimllib/limbo). This is due to a refusal of accepting pull-requests in the pre-fork which were previously cited as issues but, for whatever reason, were not being accepted, with commits after the fact of the pull-request's submission mimicing commits in pull-requests proper. So instead of waiting around to submit a pull-request that would likely get ignored and have future commits mirroring those pull-requests, this fork was created. Due to the license in the pre-fork, and after reading this very [informative article](https://gun.io/blog/how-to-github-fork-branch-and-pull-request/) it was determined that this fork would remain unmerged from its pre-fork and would accept all reasonable/issue-satisfying pull-requests, pending approval of an admin of this repository after the build is tested against its CI services.
+This project began as a fork of [llimllib's limbo](https://github.com/llimllib/limbo).
+
+Due to lack of maintenance, this fork was created to carry on and address issues that existed in the original backlog. 
+
+Since then, it has gone on to address a number of other issues.
+
+Furthermore, this fork aims to value PRs on their individual merits - all are welcomed and will be merged provided they pass the CI tests.
+
+The license of this file mirror's the original license. Some background reading can be found in this [informative article](https://gun.io/blog/how-to-github-fork-branch-and-pull-request/).
 
 ---
 ### Backlog & Collaborator Status
-So as to not have to commit minor adjustments to this `README.md`, backlog tracking can be found at our [Trello](https://trello.com/slashchat). If you should show interest in becoming a collaborator, in addition to potentially being granted collaborator status on this repository (even without which you can still create a fork of this repository and innovate as your heart should desire, as long as you abide by the software's licenses, re: `limbo.LICENSE` and `Slashchat.LICENSE` [**note** that this repository is a fork of limbo so `limbo.LICENSE` is the parent license to `Slashchat.LICENSE`]), you would also potentially be granted membership status in the organization to which the backlog boards belong on Trello. If this option should interest you, get in touch with an admin of this repository from the by finding one from the publicly-visible list on Trello [here](https://trello.com/slashchat/members), or submit an issue on this repository with ***Collaborator Status: Request*** somewhere in the title.
+An active backlog is maintained on our [Trello board](https://trello.com/slashchat). 
+
+Everyone is encouraged to fork and work on this project. 
+
+If you wish to obtain collaborator status, there are two avenues: 
+
+1. Please contact someone in the Trello group [here](https://trello.com/slashchat/members). 
+2. Alternatively, feel free to create an issue with ***Collaborator Status: Request*** in the title.
